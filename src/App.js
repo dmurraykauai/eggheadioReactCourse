@@ -1,75 +1,131 @@
 import React from 'react';
 
-// ** lesson 15 - Compose React Component Behavior with Higher Order Components
 
-const HOC = (InnerComponent) => class extends React.Component {
-    constructor() {
-        super();
-        this.state = {count: 0}
-    }
-    update() {
-        this.setState({count: this.state.count + 1})
-    }
-    componentWillMount() {
-        console.log('HOC will mount...')
-    }
-    render() {
-        return(
-            <InnerComponent
-                {...this.props}
-                {...this.state}
-                update={this.update.bind(this)} />
-        )
-    }
-};
+// ** lesson 16 - Build a JSX Live Compiler as a React Component
+import './App.css';
 
 class App extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            input: '',
+            output: '',
+            err: ''
+        }
+    }
+
+    update(e) {
+        let code = e.target.value;
+        try {
+            this.setState({
+                output: window.Babel
+                    .transform(code, {presets: ['es2015', 'react']})
+                    .code,
+                err: ''
+            })
+        } catch (err) {
+            this.setState({err: err.message})
+        }
+    }
+
     render() {
-        return(
+        return (
             <div>
-                <Button>click me</Button>
-                <hr />
-                <LabelHOC>label</LabelHOC>
-                <hr />
-                <Button2HOC>boogie!</Button2HOC>
+                <header>{this.state.err}</header>
+                <div className="container">
+                    <textarea onChange={this.update.bind(this)}
+                              defaultValue={this.state.input}
+                    placeholder="add your jsx here..."
+                    />
+                    <pre>
+                    {this.state.output}
+                </pre>
+                </div>
             </div>
         )
     }
 }
 
-const Button = HOC((props) =>
-    <button onClick={props.update}>{props.children} - {props.count}</button>);
-
-
-
-class Button2 extends React.Component {
-    render() {
-        return(
-            <button onClick={this.props.update}>
-                {this.props.children} - {this.props.count}
-            </button>
-        )
-    }
-}
-
-class Label extends React.Component {
-    componentWillMount() {
-        console.log('Label component will mount...')
-    }
-    render() {
-        return(
-            <label onMouseMove={this.props.update}>
-                {this.props.children} - {this.props.count}
-            </label>
-        )
-    }
-}
-
-const LabelHOC = HOC(Label);
-const Button2HOC = HOC(Button2);
-
-
 export default App
+
+
+// ** lesson 15 - Compose React Component Behavior with Higher Order Components
+
+// const HOC = (InnerComponent) => class extends React.Component {
+//     constructor() {
+//         super();
+//         this.state = {count: 0}
+//     }
+//     update() {
+//         this.setState({count: this.state.count + 1})
+//     }
+//     componentWillMount() {
+//         console.log('HOC will mount...')
+//     }
+//     render() {
+//         return(
+//             <InnerComponent
+//                 {...this.props}
+//                 {...this.state}
+//                 update={this.update.bind(this)} />
+//         )
+//     }
+// };
+//
+// class App extends React.Component {
+//     render() {
+//         return(
+//             <div>
+//                 <Button>click me</Button>
+//                 <hr />
+//                 <LabelHOC>label</LabelHOC>
+//                 <hr />
+//                 <Button2HOC>boogie!</Button2HOC>
+//                 <hr />
+//                 <CheckBoxy />
+//             </div>
+//         )
+//     }
+// }
+//
+// const Button = HOC((props) =>
+//     <button onClick={props.update}>
+//         {props.children} - {props.count}
+//     </button>);
+//
+// const CheckBoxy = HOC((props) =>
+//     <input type="checkbox" value={props.count} onClick={props.update} />
+//
+// );
+//
+// class Button2 extends React.Component {
+//     render() {
+//         return(
+//             <button onClick={this.props.update}>
+//                 {this.props.children} - {this.props.count}
+//             </button>
+//         )
+//     }
+// }
+//
+// class Label extends React.Component {
+//     componentWillMount() {
+//         console.log('Label component will mount...')
+//     }
+//     render() {
+//         return(
+//             <label onMouseMove={this.props.update}>
+//                 {this.props.children} - {this.props.count}
+//             </label>
+//         )
+//     }
+// }
+//
+// const LabelHOC = HOC(Label);
+// const Button2HOC = HOC(Button2);
+//
+//
+// export default App
 
 
 // ** lesson 14 - Use map to Create React Components from Arrays of Data
@@ -208,7 +264,6 @@ export default App
 // export default Wrapper
 
 
-
 // ** lesson 11 - Understand the React Component Lifecycle Methods
 // import ReactDOM from 'react-dom';
 //
@@ -262,7 +317,6 @@ export default App
 // }
 //
 // export default Wrapper
-
 
 
 // ** lesson 10 - Use React ref to Get a Reference to Specific Components
