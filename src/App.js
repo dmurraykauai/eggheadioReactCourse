@@ -1,52 +1,132 @@
 import React from 'react';
 
-
-// ** lesson 16 - Build a JSX Live Compiler as a React Component
-import './App.css';
+// ** lesson 19 - Use React.cloneElement to Extend Functionality of Children Components
 
 class App extends React.Component {
+    render() {
+        return(
+            <Buttons>
+                <button value="A">A</button>
+                <button value="B">B</button>
+                <button value="C">C</button>
+            </Buttons>
+        )
+    }
+}
+
+class Buttons extends React.Component {
     constructor() {
         super();
-        this.state = {
-            input: '',
-            output: '',
-            err: ''
-        }
+        this.state = { selected: 'None' }
     }
-
-    update(e) {
-        let code = e.target.value;
-        try {
-            this.setState({
-                output: window.Babel
-                    .transform(code, {presets: ['es2015', 'react']})
-                    .code,
-                err: ''
-            })
-        } catch (err) {
-            this.setState({err: err.message})
-        }
+    selectItem(selected) {
+        this.setState({selected})
     }
-
     render() {
-        return (
+        let fn = child =>
+            React.cloneElement(child, {
+                onClick: this.selectItem.bind(this, child.props.value)
+            });
+        let items = React.Children.map(this.props.children, fn);
+        return(
             <div>
-                <header>{this.state.err}</header>
-                <div className="container">
-                    <textarea onChange={this.update.bind(this)}
-                              defaultValue={this.state.input}
-                    placeholder="add your jsx here..."
-                    />
-                    <pre>
-                    {this.state.output}
-                </pre>
-                </div>
+                <h2>You have selected: {this.state.selected}</h2>
+                {items}
             </div>
         )
     }
 }
 
 export default App
+
+
+// ** lesson 18 - Understand React.Children Utilities
+
+// class App extends React.Component {
+//     render() {
+//         return(
+//             <Parent>
+//                 <div className="childA"></div>
+//                 <div className="childB"></div>
+//                 <div className="childC"></div>
+//             </Parent>
+//         )
+//     }
+// }
+//
+// class Parent extends React.Component {
+//     render() {
+//          let items = React.Children
+//              .map(this.props.children, child => child);
+//
+//         //let items = React.Children.toArray(this.props.children);
+//
+//         // let items = React.Children.forEach(this.props.children, child =>
+//         //     console.log(child.props.className));
+//
+//         // ** for a single child - fails on 2 or more kiddos
+//         //let items = React.Children.only(this.props.children);
+//
+//         console.table(items);
+//         return null
+//     }
+// }
+//
+// export default App
+
+
+// ** lesson 17 - Understand JSX at a Deeper Level
+// used app built in lesson 16 ... no coding outside of that editor.
+
+
+// ** lesson 16 - Build a JSX Live Compiler as a React Component
+// import './App.css';
+//
+// class App extends React.Component {
+//     constructor() {
+//         super();
+//         this.state = {
+//             input: '',
+//             output: '',
+//             err: ''
+//         }
+//     }
+//
+//     update(e) {
+//         let code = e.target.value;
+//         try {
+//             this.setState({
+//                 output: window.Babel
+//                     .transform(code, {presets: ['es2015', 'react']})
+//                     .code,
+//                 err: ''
+//             })
+//         } catch (err) {
+//             this.setState({err: err.message})
+//         }
+//     }
+//
+//     render() {
+//         return (
+//             <div>
+//                 <header>{this.state.err}</header>
+//                 <div className="container">
+//                     <textarea onChange={this.update.bind(this)}
+//                               defaultValue={this.state.input}
+//                     placeholder="add your jsx here..."
+//                     />
+//                     <pre>
+//                     {this.state.output}
+//                 </pre>
+//                 </div>
+//             </div>
+//         )
+//     }
+// }
+//
+// export default App
+
+
 
 
 // ** lesson 15 - Compose React Component Behavior with Higher Order Components
